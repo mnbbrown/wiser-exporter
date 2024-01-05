@@ -1,5 +1,5 @@
 builds:
-  - main: main.go
+  - main: .
     binary: wiser-exporter
     flags: -tags netgo
     ldflags:
@@ -16,8 +16,6 @@ builds:
       - 386
       - arm
       - arm64
-      - ppc64
-      - ppc64le
     goarm:
       - 6
       - 7
