@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus Exporter for the Drayton Wiser ecosystem
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/wiser-exporter
+ExecStart=/usr/bin/wiser-exporter
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
