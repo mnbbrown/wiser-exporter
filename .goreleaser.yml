@@ -1,5 +1,5 @@
 builds:
-  - main: cmd/wiser-exporter/main.go
+  - main: main.go
     binary: wiser-exporter
     flags: -tags netgo
     ldflags:
