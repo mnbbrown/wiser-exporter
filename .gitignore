@@ -1,3 +1,4 @@
-wiser-exporter
 .envrc
 dist
+wiser-exporter
+!packaging/default/wiser-exporter
