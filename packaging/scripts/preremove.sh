@@ -1,2 +1,2 @@
-systemctl stop process-exporter.service
-systemctl disable process-exporter.service
+systemctl stop wiser-exporter.service
+systemctl disable wiser-exporter.service
