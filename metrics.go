@@ -17,6 +17,11 @@ var (
 		Help: "The humidity of a room",
 	}, []string{"id", "name"})
 
+	roomDemand = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "wiser_room_demand",
+		Help: "The percent (out of 100) the room is demanding",
+	}, []string{"id", "name"})
+
 	roomSetPoint = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "wiser_room_set_point",
 		Help: "The set point of a room",
@@ -32,4 +37,10 @@ var (
 		Name: "wiser_channel_percent_demand",
 		Help: "The percent wiser is demanding from a channel",
 	}, []string{"id", "name"})
+
+	// devices
+	deviceBatteryVoltage = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "wiser_device_battery_voltage",
+		Help: "The voltage of the battery reported by a device",
+	}, []string{"id", "product_type", "serial_number"})
 )

@@ -58,8 +58,9 @@ func read(c config) {
 			roomTemperature.WithLabelValues(labels...).Set(parseTemp(room.CalculatedTemperature))
 			roomSetPoint.WithLabelValues(labels...).Set(parseTemp(room.CurrentSetPoint))
 			roomHeatingRate.WithLabelValues(labels...).Set(float64(room.HeatingRate))
+			roomDemand.WithLabelValues(labels...).Set(float64(room.PercentageDemand))
 
-			humidity := getHumidity(d, room.ID)
+			humidity := getHumidity(d, room.RoomStatID)
 			if humidity != -1 {
 				roomHumidity.WithLabelValues(labels...).Set(float64(humidity))
 			}
@@ -68,6 +69,15 @@ func read(c config) {
 		for _, channel := range d.HeatingChannel {
 			labels := []string{fmt.Sprintf("%d", channel.ID), channel.Name}
 			channelPercentDemand.WithLabelValues(labels...).Set(float64(channel.PercentageDemand))
+		}
+
+		for _, device := range d.Device {
+			if device.ProductType == "Controller" {
+				continue
+			}
+
+			labels := []string{fmt.Sprintf("%d", device.ID), device.ProductType, device.SerialNumber}
+			deviceBatteryVoltage.WithLabelValues(labels...).Set(float64(device.BatteryVoltage))
 		}
 
 		slog.Debug("read_successful")
