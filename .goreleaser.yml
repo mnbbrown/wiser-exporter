@@ -47,4 +47,4 @@ release:
     owner: mnbbrown
     name: wiser-exporter
   draft: false
-  prerelease: true
+  prerelease: auto
