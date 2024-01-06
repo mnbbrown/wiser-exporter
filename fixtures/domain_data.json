@@ -1,0 +1,341 @@
+{
+  "System": {
+    "PairingStatus": "Paired",
+    "provisionTokenSucceedCount": 1,
+    "provisionTokenRequestCount": 1,
+    "TimeZoneOffset": 0,
+    "AutomaticDaylightSaving": true,
+    "SystemMode": "Heat",
+    "FotaEnabled": true,
+    "ValveProtectionEnabled": false,
+    "AwayModeAffectsHotWater": true,
+    "AwayModeSetPointLimit": 160,
+    "BoilerSettings": {
+      "ControlType": "HeatSourceType_OpenTherm",
+      "FuelType": "Gas",
+      "CycleRate": "CPH_6",
+      "OnOffHysteresis": 5
+    },
+    "CoolingModeDefaultSetpoint": 210,
+    "CoolingAwayModeSetpointLimit": -200,
+    "ComfortModeEnabled": false,
+    "PreheatTimeLimit": 10800,
+    "DegradedModeSetpointThreshold": 180,
+    "GeoPosition": {
+      "Latitude": 0,
+      "Longitude": 0
+    },
+    "UfhOrphanModeOutput": "On",
+    "isMigrated": false,
+    "UnixTime": 1704436560,
+    "ActiveSystemVersion": "3.12.1-9d8272a087",
+    "ZigbeePermitJoinActive": false,
+    "BrandName": "WiserHeat",
+    "CloudConnectionStatus": "Connected",
+    "ChipId": "0xa1120e00",
+    "LocalDateAndTime": {
+      "Year": 2024,
+      "Month": "January",
+      "Date": 5,
+      "Day": "Friday",
+      "Time": 636
+    },
+    "HeatingButtonOverrideState": "Off",
+    "HotWaterButtonOverrideState": "Off",
+    "OpenThermConnectionStatus": "Connected",
+    "SunriseTimes": [
+      806,
+      806,
+      806,
+      806,
+      806,
+      806,
+      805,
+      805,
+      805,
+      804,
+      804,
+      803,
+      803
+    ],
+    "SunsetTimes": [
+      1600,
+      1601,
+      1602,
+      1603,
+      1604,
+      1605,
+      1607,
+      1608,
+      1609,
+      1611,
+      1612,
+      1613,
+      1615
+    ],
+    "isTrialist": false,
+    "isProvisioned": true,
+    "HardwareGeneration": 1
+  },
+  "Cloud": {
+    "DetailedPublishing": false,
+    "WiserApiHost": "api-nl.wiserair.com",
+    "BootStrapApiHost": "bootstrap.gl.struxurewarecloud.com"
+  },
+  "HeatingChannel": [
+    {
+      "id": 1,
+      "Name": "Channel-1",
+      "RoomIds": [
+        1
+      ],
+      "PercentageDemand": 0,
+      "DemandOnOffOutput": "Off",
+      "HeatingRelayState": "Off",
+      "IsSmartValvePreventingDemand": true
+    }
+  ],
+  "Room": [
+    {
+      "id": 1,
+      "ScheduleId": 1,
+      "HeatingRate": 1200,
+      "RoomStatId": 1,
+      "Name": "Living Room",
+      "Mode": "Auto",
+      "DemandType": "Modulating",
+      "WindowDetectionActive": false,
+      "CalculatedTemperature": 200,
+      "CurrentSetPoint": 190,
+      "PercentageDemand": 0,
+      "ControlOutputState": "Off",
+      "SetpointOrigin": "FromSchedule",
+      "DisplayedSetPoint": 190,
+      "ScheduledSetPoint": 190,
+      "AwayModeSuppressed": false,
+      "RoundedAlexaTemperature": 200,
+      "EffectiveMode": "Auto",
+      "PercentageDemandForItrv": 0,
+      "ControlDirection": "Heat",
+      "HeatingType": "HydronicRadiator"
+    }
+  ],
+  "Device": [
+    {
+      "id": 0,
+      "NodeId": 0,
+      "ProductType": "Controller",
+      "ProductIdentifier": "Controller",
+      "ActiveFirmwareVersion": "3.12.1",
+      "ModelIdentifier": "WT714R1S0902",
+      "DeviceLockEnabled": false,
+      "DisplayedSignalStrength": "Good",
+      "ReceptionOfController": {
+        "Rssi": -67
+      }
+    },
+    {
+      "id": 1,
+      "NodeId": 22843,
+      "ProductType": "RoomStat",
+      "ProductIdentifier": "RoomStat",
+      "ActiveFirmwareVersion": "0000ea63",
+      "ModelIdentifier": "Thermostat",
+      "SerialNumber": "3425B4FFFE89ADA9",
+      "ProductModel": "Thermostat",
+      "OtaImageQueryCount": 0,
+      "LastOtaImageQueryCount": 0,
+      "ParentNodeId": 0,
+      "OtaVersion": 60003,
+      "OtaHardwareVersion": 256,
+      "DeviceLockEnabled": false,
+      "DisplayedSignalStrength": "Good",
+      "BatteryVoltage": 32,
+      "BatteryLevel": "Normal",
+      "ReceptionOfController": {
+        "Rssi": -63,
+        "Lqi": 148
+      },
+      "ReceptionOfDevice": {
+        "Rssi": -64,
+        "Lqi": 144
+      },
+      "PendingZigbeeMessageMask": 0,
+      "BindingsStatus": "SetCorrectly",
+      "ReportConfigStatus": "SetCorrectly"
+    }
+  ],
+  "Zigbee": {
+    "JPANCount": 3,
+    "NetworkChannel": 25,
+    "ZigbeeModuleVersion": "1.2.0-3d1043a1",
+    "ZigbeeEUI": "048727FFFE156AB6"
+  },
+  "RoomStat": [
+    {
+      "id": 1,
+      "SetPoint": 190,
+      "MeasuredTemperature": 200,
+      "MeasuredHumidity": 54
+    }
+  ],
+  "DeviceCapabilityMatrix": {
+    "Roomstat": true,
+    "ITRV": true,
+    "SmartPlug": true,
+    "UFH": true,
+    "UFHFloorTempSensor": true,
+    "UFHDewSensor": true,
+    "HACT": false,
+    "LACT": false,
+    "Light": false,
+    "Shutter": false,
+    "LoadController": true
+  },
+  "Schedule": [
+    {
+      "id": 1,
+      "Monday": {
+        "SetPoints": [
+          {
+            "Time": 630,
+            "DegreesC": 190
+          },
+          {
+            "Time": 830,
+            "DegreesC": 150
+          },
+          {
+            "Time": 1630,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2230,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Tuesday": {
+        "SetPoints": [
+          {
+            "Time": 630,
+            "DegreesC": 190
+          },
+          {
+            "Time": 830,
+            "DegreesC": 150
+          },
+          {
+            "Time": 1630,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2230,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Wednesday": {
+        "SetPoints": [
+          {
+            "Time": 630,
+            "DegreesC": 190
+          },
+          {
+            "Time": 830,
+            "DegreesC": 150
+          },
+          {
+            "Time": 1630,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2230,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Thursday": {
+        "SetPoints": [
+          {
+            "Time": 630,
+            "DegreesC": 190
+          },
+          {
+            "Time": 830,
+            "DegreesC": 150
+          },
+          {
+            "Time": 1630,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2230,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Friday": {
+        "SetPoints": [
+          {
+            "Time": 615,
+            "DegreesC": 190
+          },
+          {
+            "Time": 830,
+            "DegreesC": 150
+          },
+          {
+            "Time": 1630,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2230,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Saturday": {
+        "SetPoints": [
+          {
+            "Time": 700,
+            "DegreesC": 190
+          },
+          {
+            "Time": 1000,
+            "DegreesC": 170
+          },
+          {
+            "Time": 1600,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2300,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Sunday": {
+        "SetPoints": [
+          {
+            "Time": 700,
+            "DegreesC": 190
+          },
+          {
+            "Time": 1000,
+            "DegreesC": 170
+          },
+          {
+            "Time": 1600,
+            "DegreesC": 200
+          },
+          {
+            "Time": 2300,
+            "DegreesC": 150
+          }
+        ]
+      },
+      "Type": "Heating"
+    }
+  ]
+}
