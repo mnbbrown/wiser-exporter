@@ -1,0 +1,46 @@
+{
+    "chFlowActiveUpperSetpoint": 800,
+    "chFlowActiveLowerSetpoint": 50,
+    "dhwFlowSetpoint": 550,
+    "dhwEnable": true,
+    "featureActions": {
+        "ModulationOnboarding": true
+    },
+    "Enabled": true,
+    "transmitter": {
+        "messagesSentCount": 3200
+    },
+    "receiver": {
+        "decodingErrorsCount": 25
+    },
+    "operatingMode": "OTplus",
+    "preDefinedRemoteBoilerParameters": {
+        "dhwSetpointTransferEnable": true,
+        "maxChSetpointTransferEnable": true,
+        "dhwSetpointReadWrite": false,
+        "maxChSetpointReadWrite": false,
+        "dhwSetpointUpperBound": 650,
+        "dhwSetpointLowerBound": 400,
+        "dhwSetpoint": 800,
+        "maxChSetpoint": 800,
+        "maxChSetpointUpperBound": 830,
+        "maxChSetpointLowerBound": 330
+    },
+    "ch1FlowSetpoint": 50,
+    "ch1FlowEnable": false,
+    "ch2FlowSetpoint": 350,
+    "ch2FlowEnable": false,
+    "operationalData": {
+        "RelativeModulationLevel": 0,
+        "MinimumModulationLevel": 25,
+        "ChPressureBar": 10,
+        "DhwFlowRate": 0,
+        "Ch1FlowTemperature": 528,
+        "ChReturnTemperature": 517,
+        "MaximumCapacityKw": 24,
+        "SlaveStatus": 0
+    },
+    "roomTemperature": 182,
+    "roomSetpoint": 150,
+    "TrackedRoomId": 1
+}

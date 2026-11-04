@@ -20,67 +20,81 @@ type config struct {
 }
 
 func (c *config) url(path string) string {
-	return fmt.Sprintf("http://%s/data/domain/%s", c.HubIP, path)
+	return fmt.Sprintf("http://%s/data/v2/%s", c.HubIP, path)
 }
 
-func makeRequest(url string, secret string) (*http.Response, error) {
-	r, err := http.NewRequest("GET", url, nil)
+var httpClient = &http.Client{Timeout: 10 * time.Second}
+
+// getJSON fetches a hub endpoint and decodes the response into out.
+func getJSON(c config, path string, out any) error {
+	r, err := http.NewRequest("GET", c.url(path), nil)
 	if err != nil {
-		return nil, err
+		return err
+	}
+	r.Header.Set("SECRET", c.Secret)
+
+	resp, err := httpClient.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status %d from %s", resp.StatusCode, path)
+	}
+	return json.NewDecoder(resp.Body).Decode(out)
+}
+
+func recordDomain(d *DomainData) {
+	for _, room := range d.Room {
+		labels := []string{fmt.Sprintf("%d", room.ID), room.Name}
+		roomTemperature.WithLabelValues(labels...).Set(parseTemp(room.CalculatedTemperature))
+		roomSetPoint.WithLabelValues(labels...).Set(parseTemp(room.CurrentSetPoint))
+		roomHeatingRate.WithLabelValues(labels...).Set(float64(room.HeatingRate))
+		roomDemand.WithLabelValues(labels...).Set(float64(room.PercentageDemand))
+
+		humidity := getHumidity(d, room.RoomStatID)
+		if humidity != -1 {
+			roomHumidity.WithLabelValues(labels...).Set(float64(humidity))
+		}
 	}
 
-	r.Header.Set("Content-Tye", "application/json")
-	r.Header.Set("SECRET", secret)
+	for _, channel := range d.HeatingChannel {
+		labels := []string{fmt.Sprintf("%d", channel.ID), channel.Name}
+		channelPercentDemand.WithLabelValues(labels...).Set(float64(channel.PercentageDemand))
+		channelRelayOn.WithLabelValues(labels...).Set(boolToFloat(channel.HeatingRelayState == "On"))
+	}
 
-	resp, err := http.DefaultClient.Do(r)
-	return resp, err
+	for _, device := range d.Device {
+		if device.ProductType == "Controller" {
+			continue
+		}
+
+		labels := []string{fmt.Sprintf("%d", device.ID), device.ProductType, device.SerialNumber}
+		deviceBatteryVoltage.WithLabelValues(labels...).Set(float64(device.BatteryVoltage))
+	}
+
+	otConnected.Set(boolToFloat(d.System.OpenThermConnectionStatus == "Connected"))
+}
+
+// scrape reads one endpoint and records it, tracking failures per endpoint so
+// a broken OpenTherm read doesn't stop room metrics (or the reverse).
+func scrape[T any](c config, endpoint string, record func(*T)) {
+	v := new(T)
+	if err := getJSON(c, endpoint+"/", v); err != nil {
+		slog.Warn("scrape_failed", "endpoint", endpoint, "err", err)
+		scrapeErrors.WithLabelValues(endpoint).Inc()
+		return
+	}
+	record(v)
+	lastScrapeSuccess.WithLabelValues(endpoint).SetToCurrentTime()
 }
 
 func read(c config) {
 	for {
-		resp, err := makeRequest(c.url(""), c.Secret)
-		if err != nil {
-			slog.Warn("failed_to_request", "err", err)
-			time.Sleep(5 * time.Second)
-			continue
-		}
-
-		d := &DomainData{}
-		reader := json.NewDecoder(resp.Body)
-		if err := reader.Decode(&d); err != nil {
-			slog.Warn("failed_to_decode", "err", err)
-			time.Sleep(5 * time.Second)
-			continue
-		}
-
-		for _, room := range d.Room {
-			labels := []string{fmt.Sprintf("%d", room.ID), room.Name}
-			roomTemperature.WithLabelValues(labels...).Set(parseTemp(room.CalculatedTemperature))
-			roomSetPoint.WithLabelValues(labels...).Set(parseTemp(room.CurrentSetPoint))
-			roomHeatingRate.WithLabelValues(labels...).Set(float64(room.HeatingRate))
-			roomDemand.WithLabelValues(labels...).Set(float64(room.PercentageDemand))
-
-			humidity := getHumidity(d, room.RoomStatID)
-			if humidity != -1 {
-				roomHumidity.WithLabelValues(labels...).Set(float64(humidity))
-			}
-		}
-
-		for _, channel := range d.HeatingChannel {
-			labels := []string{fmt.Sprintf("%d", channel.ID), channel.Name}
-			channelPercentDemand.WithLabelValues(labels...).Set(float64(channel.PercentageDemand))
-		}
-
-		for _, device := range d.Device {
-			if device.ProductType == "Controller" {
-				continue
-			}
-
-			labels := []string{fmt.Sprintf("%d", device.ID), device.ProductType, device.SerialNumber}
-			deviceBatteryVoltage.WithLabelValues(labels...).Set(float64(device.BatteryVoltage))
-		}
-
-		slog.Debug("read_successful")
+		scrape(c, "domain", recordDomain)
+		scrape(c, "opentherm", recordOpenTherm)
+		slog.Debug("read_complete")
 		time.Sleep(c.Interval)
 	}
 }
