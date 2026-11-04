@@ -12,6 +12,17 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// Set by goreleaser at build time.
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
+// noReading is the value the hub reports for a temperature it doesn't have,
+// e.g. a room whose sensor is offline or not yet paired (shows as -3276.8°C).
+const noReading = -32768
+
 type config struct {
 	HubIP    string        `envconfig:"wiser_hub_ip" required:"true"`
 	Secret   string        `envconfig:"wiser_secret" required:"true"`
@@ -48,7 +59,11 @@ func getJSON(c config, path string, out any) error {
 func recordDomain(d *DomainData) {
 	for _, room := range d.Room {
 		labels := []string{fmt.Sprintf("%d", room.ID), room.Name}
-		roomTemperature.WithLabelValues(labels...).Set(parseTemp(room.CalculatedTemperature))
+		if room.CalculatedTemperature == noReading {
+			roomTemperature.DeleteLabelValues(labels...)
+		} else {
+			roomTemperature.WithLabelValues(labels...).Set(parseTemp(room.CalculatedTemperature))
+		}
 		roomSetPoint.WithLabelValues(labels...).Set(parseTemp(room.CurrentSetPoint))
 		roomHeatingRate.WithLabelValues(labels...).Set(float64(room.HeatingRate))
 		roomDemand.WithLabelValues(labels...).Set(float64(room.PercentageDemand))
@@ -71,7 +86,12 @@ func recordDomain(d *DomainData) {
 		}
 
 		labels := []string{fmt.Sprintf("%d", device.ID), device.ProductType, device.SerialNumber}
-		deviceBatteryVoltage.WithLabelValues(labels...).Set(float64(device.BatteryVoltage))
+		// Mains-powered and offline devices report no voltage at all.
+		if device.BatteryVoltage == 0 {
+			deviceBatteryVoltage.DeleteLabelValues(labels...)
+		} else {
+			deviceBatteryVoltage.WithLabelValues(labels...).Set(float64(device.BatteryVoltage))
+		}
 	}
 
 	otConnected.Set(boolToFloat(d.System.OpenThermConnectionStatus == "Connected"))
@@ -107,11 +127,14 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	buildInfo.WithLabelValues(version, commit, date).Set(1)
+	slog.Info("starting", "version", version, "commit", commit, "hub", c.HubIP)
+
 	// start reading
 	go read(c)
 
 	http.Handle("/metrics", promhttp.Handler())
 	addr := fmt.Sprintf(":%d", c.Port)
 	slog.Info("listening", "address", addr)
-	http.ListenAndServe(addr, nil)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }

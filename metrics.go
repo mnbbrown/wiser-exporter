@@ -6,6 +6,11 @@ import (
 )
 
 var (
+	buildInfo = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "wiser_exporter_build_info",
+		Help: "Always 1; labels carry the exporter's version, commit and build date",
+	}, []string{"version", "commit", "date"})
+
 	// room
 	roomTemperature = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "wiser_room_temperature",
