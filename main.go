@@ -80,6 +80,8 @@ func recordDomain(d *DomainData) {
 		humidity := getHumidity(d, room.RoomStatID)
 		if humidity != -1 {
 			roomHumidity.WithLabelValues(labels...).Set(float64(humidity))
+		} else {
+			roomHumidity.DeleteLabelValues(labels...)
 		}
 	}
 

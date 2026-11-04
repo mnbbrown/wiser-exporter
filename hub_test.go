@@ -73,3 +73,21 @@ func TestRecordHub(t *testing.T) {
 	assert.Equal(t, 3634.0, testutil.ToFloat64(hubUptime))
 	assert.Equal(t, 1.0, testutil.ToFloat64(hubLastReset.WithLabelValues("GENERAL_RST")))
 }
+
+func TestHumidityDropsWhileRoomStatOffline(t *testing.T) {
+	d := &DomainData{}
+	if err := json.Unmarshal([]byte(`{
+	  "Room": [{"id": 1, "Name": "Living Room", "RoomStatId": 1}],
+	  "RoomStat": [{"id": 1, "MeasuredTemperature": 183, "MeasuredHumidity": 63}]
+	}`), d); err != nil {
+		t.Fatal(err)
+	}
+	recordDomain(d)
+	assert.Equal(t, 63.0, testutil.ToFloat64(roomHumidity.WithLabelValues("1", "Living Room")))
+
+	// Shape seen during the 2026-11-04 hub reboot.
+	d.RoomStat[0].MeasuredTemperature = noReading
+	d.RoomStat[0].MeasuredHumidity = 0
+	recordDomain(d)
+	assert.Equal(t, 0, testutil.CollectAndCount(roomHumidity))
+}
