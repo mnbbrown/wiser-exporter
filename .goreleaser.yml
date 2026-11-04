@@ -1,33 +1,38 @@
+version: 2
+
+project_name: wiser-exporter
+
 builds:
   - main: .
     binary: wiser-exporter
-    flags: -tags netgo
+    env:
+      - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X github.com/prometheus/common/version.BuildDate={{.Date}}
-      - -X github.com/prometheus/common/version.BuildUser=goreleaser
-      - -X github.com/prometheus/common/version.Revision={{.FullCommit}}
-      - -X main.version={{.Version}}
-
+      - -X main.version={{ .Version }}
+      - -X main.commit={{ .ShortCommit }}
+      - -X main.date={{ .Date }}
     goos:
       - linux
     goarch:
       - amd64
-      - 386
       - arm
       - arm64
     goarm:
-      - 6
-      - 7
+      - "6"
+      - "7"
+
 archives:
   - name_template: "wiser-exporter-{{ .Version }}.{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     wrap_in_directory: true
+
 checksum:
   name_template: checksums.txt
+
 nfpms:
   - homepage: https://github.com/mnbbrown/wiser-exporter
     maintainer: me@matthewbrown.io
-    description: Prometheus exporter to report on processes running
+    description: Prometheus exporter for Drayton Wiser heating systems, including OpenTherm boiler data
     license: MIT
     formats:
       - deb
@@ -37,11 +42,12 @@ nfpms:
         dst: /lib/systemd/system/wiser-exporter.service
       - src: packaging/default/wiser-exporter
         dst: /etc/default/wiser-exporter
-        type: config
+        type: config|noreplace
     scripts:
-      postinstall: "packaging/scripts/postinstall.sh"
-      postremove: "packaging/scripts/postremove.sh"
-      preremove: "packaging/scripts/preremove.sh"
+      postinstall: packaging/scripts/postinstall.sh
+      postremove: packaging/scripts/postremove.sh
+      preremove: packaging/scripts/preremove.sh
+
 release:
   github:
     owner: mnbbrown
