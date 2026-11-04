@@ -1,6 +1,6 @@
 ### wiser-exporter
 
-Uses the Drayton Wiser HubR local API (`/data/v2/domain/` and `/data/v2/opentherm/`) to export Prometheus metrics.
+Uses the Drayton Wiser HubR local API (`/data/v2/domain/`, `opentherm/`, `network/` and `status/`) to export Prometheus metrics.
 
 | Metric | Labels | Notes |
 |---|---|---|
@@ -12,6 +12,26 @@ Uses the Drayton Wiser HubR local API (`/data/v2/domain/` and `/data/v2/openther
 | `wiser_channel_percent_demand` | id, name | % |
 | `wiser_channel_relay_on` | id, name | 1 when the heating relay is on |
 | `wiser_device_battery_voltage` | id, product_type, serial_number | Omitted for mains-powered or offline devices |
+| `wiser_room_scheduled_set_point` | id, name | °C the schedule asks for now |
+| `wiser_room_override_active` | id, name | 1 during a boost or manual override |
+| `wiser_room_window_detection_enabled` | id, name | |
+| `wiser_room_window_open` | id, name | Open-window state, inferred from a rapid temperature drop |
+| `wiser_valve_temperature` | id, room | °C measured at the radiator valve |
+| `wiser_valve_demand` | id, room | % |
+| `wiser_valve_window_open` | id, room | |
+| `wiser_device_rssi_dbm` | id, product_type, serial_number, link | Zigbee RSSI; link is `hub_to_device` or `device_to_hub` |
+| `wiser_device_lqi` | id, product_type, serial_number, link | Zigbee link quality, 0-255 |
+| `wiser_device_battery_level` | id, product_type, serial_number, level | Always 1; level is `normal`, `twothirds`, `onethird`, ... |
+| `wiser_hub_wifi_connected` | | |
+| `wiser_hub_wifi_rssi_dbm` | | |
+| `wiser_hub_wifi_connection_failures` | | Since hub boot |
+| `wiser_hub_wifi_info` | ssid, channel | Always 1 |
+| `wiser_hub_uptime_seconds` | | |
+| `wiser_hub_free_heap_bytes` | | |
+| `wiser_hub_lowest_free_heap_bytes` | | Since hub boot |
+| `wiser_hub_last_reset_info` | reason | Always 1 |
+| `wiser_hub_zigbee_no_signal_resets` | | Undocumented counter |
+| `wiser_hub_zigbee_jpan_count` | | Undocumented counter |
 | `wiser_opentherm_connected` | | 1 when the hub's OpenTherm link is up |
 | `wiser_opentherm_enabled` | | |
 | `wiser_opentherm_flow_temperature_celsius` | | |

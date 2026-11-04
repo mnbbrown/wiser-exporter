@@ -87,6 +87,9 @@ type DomainData struct {
 		PercentageDemandForItrv int    `json:"PercentageDemandForItrv"`
 		ControlDirection        string `json:"ControlDirection"`
 		HeatingType             string `json:"HeatingType"`
+		OverrideType            string `json:"OverrideType"`
+		WindowState             string `json:"WindowState"`
+		SmartValveIDs           []int  `json:"SmartValveIds"`
 	} `json:"Room"`
 	Device []struct {
 		ID                      int    `json:"id"`
@@ -97,32 +100,36 @@ type DomainData struct {
 		ModelIdentifier         string `json:"ModelIdentifier"`
 		DeviceLockEnabled       bool   `json:"DeviceLockEnabled"`
 		DisplayedSignalStrength string `json:"DisplayedSignalStrength"`
-		ReceptionOfController   struct {
-			Rssi int `json:"Rssi"`
-		} `json:"ReceptionOfController"`
-		SerialNumber           string `json:"SerialNumber,omitempty"`
-		ProductModel           string `json:"ProductModel,omitempty"`
-		OtaImageQueryCount     int    `json:"OtaImageQueryCount,omitempty"`
-		LastOtaImageQueryCount int    `json:"LastOtaImageQueryCount,omitempty"`
-		ParentNodeID           int    `json:"ParentNodeId,omitempty"`
-		OtaVersion             int    `json:"OtaVersion,omitempty"`
-		OtaHardwareVersion     int    `json:"OtaHardwareVersion,omitempty"`
-		BatteryVoltage         int    `json:"BatteryVoltage,omitempty"`
-		BatteryLevel           string `json:"BatteryLevel,omitempty"`
-		ReceptionOfDevice      struct {
-			Rssi int `json:"Rssi"`
-			Lqi  int `json:"Lqi"`
-		} `json:"ReceptionOfDevice,omitempty"`
-		PendingZigbeeMessageMask int    `json:"PendingZigbeeMessageMask,omitempty"`
-		BindingsStatus           string `json:"BindingsStatus,omitempty"`
-		ReportConfigStatus       string `json:"ReportConfigStatus,omitempty"`
+		// Pointers: both are absent for a device the hub can't hear.
+		ReceptionOfController    *Reception `json:"ReceptionOfController"`
+		SerialNumber             string     `json:"SerialNumber,omitempty"`
+		ProductModel             string     `json:"ProductModel,omitempty"`
+		OtaImageQueryCount       int        `json:"OtaImageQueryCount,omitempty"`
+		LastOtaImageQueryCount   int        `json:"LastOtaImageQueryCount,omitempty"`
+		ParentNodeID             int        `json:"ParentNodeId,omitempty"`
+		OtaVersion               int        `json:"OtaVersion,omitempty"`
+		OtaHardwareVersion       int        `json:"OtaHardwareVersion,omitempty"`
+		BatteryVoltage           int        `json:"BatteryVoltage,omitempty"`
+		BatteryLevel             string     `json:"BatteryLevel,omitempty"`
+		ReceptionOfDevice        *Reception `json:"ReceptionOfDevice,omitempty"`
+		PendingZigbeeMessageMask int        `json:"PendingZigbeeMessageMask,omitempty"`
+		BindingsStatus           string     `json:"BindingsStatus,omitempty"`
+		ReportConfigStatus       string     `json:"ReportConfigStatus,omitempty"`
 	} `json:"Device"`
 	Zigbee struct {
 		JPANCount           int    `json:"JPANCount"`
+		NoSignalReset       int    `json:"NoSignalReset"`
 		NetworkChannel      int    `json:"NetworkChannel"`
 		ZigbeeModuleVersion string `json:"ZigbeeModuleVersion"`
 		ZigbeeEUI           string `json:"ZigbeeEUI"`
 	} `json:"Zigbee"`
+	SmartValve []struct {
+		ID                  int    `json:"id"`
+		SetPoint            int    `json:"SetPoint"`
+		MeasuredTemperature int    `json:"MeasuredTemperature"`
+		PercentageDemand    *int   `json:"PercentageDemand"`
+		WindowState         string `json:"WindowState"`
+	} `json:"SmartValve"`
 	RoomStat []struct {
 		ID                  int `json:"id"`
 		SetPoint            int `json:"SetPoint"`
@@ -188,4 +195,10 @@ type DomainData struct {
 		} `json:"Sunday"`
 		Type string `json:"Type"`
 	} `json:"Schedule"`
+}
+
+// Reception is a Zigbee link measurement as reported by the hub.
+type Reception struct {
+	Rssi int `json:"Rssi"`
+	Lqi  int `json:"Lqi"`
 }

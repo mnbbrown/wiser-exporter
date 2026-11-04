@@ -68,6 +68,15 @@ func recordDomain(d *DomainData) {
 		roomHeatingRate.WithLabelValues(labels...).Set(float64(room.HeatingRate))
 		roomDemand.WithLabelValues(labels...).Set(float64(room.PercentageDemand))
 
+		roomScheduledSetPoint.WithLabelValues(labels...).Set(parseTemp(room.ScheduledSetPoint))
+		roomOverrideActive.WithLabelValues(labels...).Set(boolToFloat(room.OverrideType != "" && room.OverrideType != "None"))
+		roomWindowDetectionEnabled.WithLabelValues(labels...).Set(boolToFloat(room.WindowDetectionActive))
+		if open, ok := windowOpen(room.WindowState); ok {
+			roomWindowOpen.WithLabelValues(labels...).Set(open)
+		} else {
+			roomWindowOpen.DeleteLabelValues(labels...)
+		}
+
 		humidity := getHumidity(d, room.RoomStatID)
 		if humidity != -1 {
 			roomHumidity.WithLabelValues(labels...).Set(float64(humidity))
@@ -94,6 +103,10 @@ func recordDomain(d *DomainData) {
 		}
 	}
 
+	recordDevices(d)
+
+	hubZigbeeNoSignalResets.Set(float64(d.Zigbee.NoSignalReset))
+	hubZigbeeJPANCount.Set(float64(d.Zigbee.JPANCount))
 	otConnected.Set(boolToFloat(d.System.OpenThermConnectionStatus == "Connected"))
 }
 
@@ -114,6 +127,8 @@ func read(c config) {
 	for {
 		scrape(c, "domain", recordDomain)
 		scrape(c, "opentherm", recordOpenTherm)
+		scrape(c, "network", recordNetwork)
+		scrape(c, "status", recordStatus)
 		slog.Debug("read_complete")
 		time.Sleep(c.Interval)
 	}
